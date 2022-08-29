@@ -1,71 +1,47 @@
 /// Function construction
-function Invoices(name, invoices = "unknown", amount = "unknown") {
+function Invoices(name, position, id) {
   this.name = name;
-  this.invoices = invoices;
-  this.amount = amount;
+  this.position = position;
+  this.id = id;
+  this.report = false; // isReport?
 
-  Invoices.prototype.getInfo = function () {
-    return `Hello ${this.name}, your invoice balance #${this.invoices} : ${this.amount}$ `;
-  };
-  Invoices.prototype.getName = function () {
-    return `Hello ${this.name}`;
-  };
   Invoices.static = function () {
     return "I do not have access to instance";
   };
 }
 
-const user = new Invoices("Yurii", 422, 10000);
-console.log("user :", user);
-console.log("user :", user.getInfo());
-
-const accountantInvoice = new Invoices("Semenovna", 2);
-accountantInvoice.position = "Accountant";
-accountantInvoice.getInfo = function () {
-  return `Hello ${this.name}, your position ${this.position} `;
+Invoices.prototype.getInfo = function () {
+  return `Hello ${this.name}, your position ${this.position}. Id : ${this.id}`;
 };
-console.log("accountantInvoice :", accountantInvoice);
-console.log("accountantInvoice :", accountantInvoice.getInfo());
-
-const seo = new Invoices("Michalich", 1);
-seo.someProperty = "some property";
-seo.print = function () {
-  return this.someProperty;
+Invoices.prototype.getName = function () {
+  return `Hello ${this.name}`;
 };
-console.log("seo :", seo);
-console.log("seo :", seo.getInfo());
-console.log("seo :", seo.print());
 
-function Owner(name, company) {
-  this.__proto__ = new Invoices();
-  Invoices.call(this, name);
-  this.company = company;
+const user = new Invoices('Yurii', 'user', 100)
+console.log(user);
+
+function AccountantInvoice(name, position, id, report) {
+  Invoices.call(this, name, position, id)
+  this.report = report;
+}
+AccountantInvoice.prototype = Object.create(Invoices.prototype);
+AccountantInvoice.prototype.constructor = AccountantInvoice;
+AccountantInvoice.prototype.getReport = function () {
+  return this.report ? `Hello ${this.name} you can get a report` : `Hello ${this.name} you can't get a report`
 }
 
-const owner = new Owner("Petrovich", "RBC");
-console.log("owner: check method of basic prototype ", owner.getName());
+const accountant1 = new AccountantInvoice('Sergeevna', 'accountant', 4, true)
+const accountant2 = new AccountantInvoice('Petrovna', 'accountant', 5, true)
+const accountant3 = new AccountantInvoice('Valentinovna', 'accountant', 6, false)
+console.log(accountant1);
+console.log(accountant1.getInfo());
+console.log(accountant1.getReport());
+console.log(accountant3.getReport());
 
-owner.subordinates = [
-  {
-    name: "Yurii",
-    position: "user",
-  },
-  {
-    name: "Semenovna",
-    position: "Accountant",
-  },
-  {
-    name: "Michalich",
-    position: "seo",
-  },
-];
-owner.print = function () {
-  return this.subordinates;
-};
-console.log("owner :", owner);
-console.log("owner :", owner.subordinates);
+function CEOInvoice (name, position, id) {
+  Invoices.call(this, name, position, id)
+}
 
-console.log("Static method :", Invoices.static());
 
 /// Class
 console.log("///////////////////////////////////////////////////");
@@ -82,28 +58,28 @@ class ClassInvoices {
     return "I do not have access to instance";
   }
 }
-console.log("ClassInvoices static method:", ClassInvoices.staticMethod());
+// console.log("ClassInvoices static method:", ClassInvoices.staticMethod());
 
 const classUser = new ClassInvoices("Yurii", 422, 10000);
-console.log("classUser :", classUser);
-console.log("classUser :", classUser.getInfo());
+// console.log("classUser :", classUser);
+// console.log("classUser :", classUser.getInfo());
 
 const classAccountantInvoice = new ClassInvoices("Semenovna", 2);
 classAccountantInvoice.position = "Accountant";
 classAccountantInvoice.getInfo = function () {
   return `Hello ${this.name}, your position :${this.position} `;
 };
-console.log("classAccountantInvoice :", classAccountantInvoice);
-console.log("classAccountantInvoice :", classAccountantInvoice.getInfo());
+// console.log("classAccountantInvoice :", classAccountantInvoice);
+// console.log("classAccountantInvoice :", classAccountantInvoice.getInfo());
 
 const classSeo = new ClassInvoices("Michalich", 1);
 classSeo.someProperty = "some property";
 classSeo.print = function () {
   return this.someProperty;
 };
-console.log("classSeo :", classSeo);
-console.log("classSeo :", classSeo.getInfo());
-console.log("classSeo :", classSeo.print());
+// console.log("classSeo :", classSeo);
+// console.log("classSeo :", classSeo.getInfo());
+// console.log("classSeo :", classSeo.print());
 
 class ClassOwner extends ClassInvoices {
   constructor(company) {
@@ -113,8 +89,7 @@ class ClassOwner extends ClassInvoices {
 }
 
 const classOwner = new ClassOwner("RBC");
-classOwner.subordinates = [
-  {
+classOwner.subordinates = [{
     name: "Yurii",
     position: "user",
   },
@@ -130,5 +105,5 @@ classOwner.subordinates = [
 classOwner.print = function () {
   return this.subordinates;
 };
-console.log("classOwner :", classOwner);
-console.log("classOwner :", classOwner.subordinates);
+// console.log("classOwner :", classOwner);
+// console.log("classOwner :", classOwner.subordinates);
